@@ -1,6 +1,8 @@
-module go-necro
+module github.com/issenn/game-scraper
 
 go 1.18
+
+replace go-necro => github.com/issenn/game-scraper
 
 require (
 	github.com/adrg/xdg v0.4.0
