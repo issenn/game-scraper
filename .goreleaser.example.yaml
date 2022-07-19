@@ -1,0 +1,490 @@
+# This is an example .goreleaser.yml file with some sensible defaults.
+# Make sure to check the documentation at https://goreleaser.com
+project_name: game-scraper
+env:
+  # - FOO={{ .Env.FOOBAR }}
+  # - ENV_WITH_DEFAULT={{ if index .Env "ENV_WITH_DEFAULT"  }}{{ .Env.ENV_WITH_DEFAULT }}{{ else }}default_value{{ end }}
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+env_files:
+  # github_token: ~/.config/goreleaser/github_token
+  # gitlab_token: ~/.config/goreleaser/gitlab_token
+  # gitea_token: ~/.config/goreleaser/gitea_token
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    # - go mod tidy
+    # you may remove this if you don't need go generate
+    # - go generate ./...
+builds:
+  # You can have multiple builds defined as a yaml list
+  -
+    # ID of the build.
+    # Defaults to the binary name.
+    id: bin/necro
+
+    # Path to project's (sub)directory containing Go code.
+    # This is the working directory for the Go build command(s).
+    # Default is `.`.
+    dir: .
+
+    # Path to main.go file or main package.
+    # Notice: when used with `gomod.proxy`, this must be a package.
+    #
+    # Default is `.`.
+    main: ./cmd/necro
+
+    # Binary name.
+    # Can be a path (e.g. `bin/app`) to wrap the binary in a directory.
+    # Default is the name of the project directory.
+    binary: bin/necro
+
+    # Custom flags templates.
+    # Default is empty.
+    # flags:
+      # - -tags=dev
+      # - -v
+
+    # Custom asmflags templates.
+    # Default is empty.
+    # asmflags:
+    #   - -D mysymbol
+    #   - all=-trimpath={{.Env.GOPATH}}
+
+    # Custom gcflags templates.
+    # Default is empty.
+    gcflags:
+      # -N disable optimizations  # 禁用优化
+      # -l disable inlining  # 禁用内联优化
+      - all=-N -l
+      # - all=-trimpath={{.Env.GOPATH}}
+      # - ./dontoptimizeme=-N
+
+    # Custom ldflags templates.
+    # Default is `-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.builtBy=goreleaser`.
+    ldflags:
+      # -s disable symbol table  # 禁用符号表
+      - -s
+      # -w disable DWARF generation  # 禁用调试信息
+      - -w
+      # -X definition  # 编译期设置变量的值
+      #   add string value definition of the form importpath.name=value
+      - -X go-necro/internal/meta.Version={{.Version}}
+      - -X go-necro/internal/meta.Commit={{.Commit}}
+      - -X go-necro/internal/meta.Date={{.CommitDate}}
+      - -X go-necro/internal/meta.BuiltBy=goreleaser
+      # - "{{ .Env.LDFLAGS }}"
+      # - -X "main.goVersion={{.Env.GOVERSION}}"
+      # - -X main.build={{.Version}}
+      # - ./usemsan=-msan
+
+    # Custom build tags templates.
+    # Default is empty.
+    # tags:
+    #   - osusergo
+    #   - netgo
+    #   - static_build
+    #   - feature
+
+    # Custom environment variables to be set during the builds.
+    # Default is empty.
+    env:
+      - CGO_ENABLED=0
+
+    # GOOS list to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Defaults are darwin and linux.
+    goos:
+      # - linux
+      - darwin
+      # - windows
+
+    # GOARCH to build for.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Defaults are 386, amd64 and arm64.
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+      # - mips
+      # - mipsle
+      # - mips64
+      # - mips64le
+
+    # GOARM to build for when GOARCH is arm.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Default is only 6.
+    goarm:
+      # - 5
+      - 6
+      - 7
+
+    # GOAMD64 to build when GOARCH is amd64.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Default is only v1.
+    # goamd64:
+    #   - v1
+    #   - v2
+    #   - v3
+    #   - v4
+
+    # GOMIPS and GOMIPS64 to build when GOARCH is mips, mips64, mipsle or mips64le.
+    # For more info refer to: https://golang.org/doc/install/source#environment
+    # Default is only hardfloat.
+    gomips:
+      - hardfloat
+      - softfloat
+
+    # List of combinations of GOOS + GOARCH + GOARM to ignore.
+    # Default is empty.
+    # ignore:
+    #   - goos: darwin
+    #     goarch: 386
+    #   - goos: linux
+    #     goarch: arm
+    #     goarm: 7
+    #   - goarm: mips64
+    #   - gomips: hardfloat
+    #   - goamd64: v4
+
+    # Optionally override the matrix generation and specify only the final list of targets.
+    # Format is `{goos}_{goarch}` with optionally a suffix with `_{goarm}`, `_{goamd64}` or `_{gomips}`.
+    #
+    # Special values:
+    # - go_118_first_class: evaluates to the first-class targets of go1.18
+    # - go_first_class: evaluates to latest stable go first-class targets, currently same as 1.18.
+    #
+    # This overrides `goos`, `goarch`, `goarm`, `gomips`, `goamd64` and `ignores`.
+    # targets:
+    #   - go_first_class
+    #   - go_118_first_class
+    #   - linux_amd64_v1
+    #   - darwin_arm64
+    #   - linux_arm_6
+
+    # Set a specific go binary to use when building.
+    # It is safe to ignore this option in most cases.
+    #
+    # Default is "go"
+    # gobinary: "go1.13.4"
+
+    # Sets the command to run to build.
+    # Can be useful if you want to build tests, for example,
+    # in which case you can set this to "test".
+    # It is safe to ignore this option in most cases.
+    #
+    # Default is "build".
+    # command: test
+
+    # Set the modified timestamp on the output binary, typically
+    # you would do this to ensure a build was reproducible. Pass
+    # empty string to skip modifying the output.
+    # Default is empty string.
+    mod_timestamp: '{{ .CommitTimestamp }}'
+
+    # Hooks can be used to customize the final binary,
+    # for example, to run generators.
+    # Those fields allow templates.
+    # Default is both hooks empty.
+    # hooks:
+    #   pre:
+    #     - rice embed-go
+    #     - cmd: second-script.sh
+    #       dir: "{{ dir .Dist}}"
+    #       output: true # always print command output, otherwise only visible in debug mode
+    #       env:
+    #         - HOOK_SPECIFIC_VAR={{ .Env.GLOBAL_VAR }}
+    #   post:
+    #     - ./script.sh {{ .Path }}
+    #     - upx "{{ .Path }}"
+    #     - codesign -project="{{ .ProjectName }}" "{{ .Path }}"
+
+    # If true, skip the build.
+    # Useful for library projects.
+    # Default is false
+    # skip: false
+
+    # By default, GoReleaser will create your binaries inside `dist/${BuildID}_${BuildTarget}`, which is an unique directory per build target in the matrix.
+    # You can set subdirs within that folder using the `binary` property.
+    #
+    # However, if for some reason you don't want that unique directory to be created, you can set this property.
+    # If you do, you are responsible for keeping different builds from overriding each other.
+    #
+    # Defaults to `false`.
+    # no_unique_dist_dir: true
+
+    # By default, GoReleaser will check if the main filepath has a main function.
+    # This can be used to skip that check, in case you're building tests, for example.
+    #
+    # Defaults to `false`.
+    # no_main_check: true
+
+    # Builder allows you to use a different build implementation.
+    # This is a GoReleaser Pro feature.
+    # Valid options are: `go` and `prebuilt`.
+    # Defaults to `go`.
+    builder: go
+
+    # Overrides allows to override some fields for specific targets.
+    # This can be specially useful when using CGO.
+    # Note: it'll only match if the full target matches.
+    #
+    # Defaults to empty.
+    # overrides:
+    #   - goos: darwin
+    #     goarch: arm64
+    #     goamd64: v1
+    #     goarm: ''
+    #     gomips: ''
+    #     ldflags:
+    #       - foo
+    #     tags:
+    #       - bar
+    #     asmflags:
+    #       - foobar
+    #     gcflags:
+    #       - foobaz
+    #     env:
+    #       - CGO_ENABLED=1
+universal_binaries:
+  -
+    # ID of resulting universal binary.
+    #
+    # Defaults to the project name.
+    id: bin/necro
+
+    # IDs to use to filter the built binaries.
+    #
+    # Defaults to the `id` field.
+    ids:
+      - bin/necro
+
+    # Universal binary name template.
+    #
+    # You will want to change this if you have multiple builds!
+    #
+    # Defaults to '{{ .ProjectName }}'
+    # name_template: '{{.ProjectName}}_{{.Version}}'
+    name_template: 'bin/necro'
+
+    # Whether to remove the previous single-arch binaries from the artifact list.
+    # If left as false, your end release might have both several macOS archives: amd64, arm64 and all.
+    #
+    # Defaults to false.
+    replace: true
+
+    # Hooks can be used to customize the final binary,
+    # for example, to run generators.
+    # Those fields allow templates.
+    #
+    # Default is both hooks empty.
+    # hooks:
+    #   pre: rice embed-go
+    #   post: ./script.sh {{ .Path }}
+archives:
+  - # ID of this archive.
+    # Defaults to `default`.
+    id: bin/necro
+
+    # Builds reference which build instances should be archived in this archive.
+    # Default is empty, which includes all builds.
+    builds:
+      - bin/necro
+
+    # Archive format. Valid options are `tar.gz`, `tar.xz`, `tar`, `gz`, `zip` and `binary`.
+    # If format is `binary`, no archives are created and the binaries are instead
+    # uploaded directly.
+    # Default is `tar.gz`.
+    # format: zip
+    # format: binary
+
+    # This will create an archive without any binaries, only the files are there.
+    # The name template must not contain any references to `Os`, `Arch` and etc, since the archive will be meta.
+    # Default is false.
+    # meta: true
+
+    # Archive name template.
+    # Defaults:
+    # - if format is `tar.gz`, `tar.xz`, `gz` or `zip`:
+    #   - `{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}`
+    # - if format is `binary`:
+    #   - `{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}{{ with .Arm }}v{{ . }}{{ end }}{{ with .Mips }}_{{ . }}{{ end }}{{ if not (eq .Amd64 "v1") }}{{ .Amd64 }}{{ end }}`
+    # name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+    # Replacements for GOOS and GOARCH in the archive name.
+    # Keys should be valid GOOSs or GOARCHs.
+    # Values are the respective replacements.
+    # Default is empty.
+    replacements:
+      # darwin: Darwin
+      darwin: macOS
+      linux: Linux
+      # linux: Tux
+      windows: Windows
+      # "386": i386
+      "386": 32-bit
+      # amd64: x86_64
+      amd64: 64-bit
+
+    # Set to true, if you want all files in the archive to be in a single directory.
+    # If set to true and you extract the archive 'goreleaser_Linux_arm64.tar.gz',
+    # you get a folder 'goreleaser_Linux_arm64'.
+    # If set to false, all files are extracted separately.
+    # You can also set it to a custom folder name (templating is supported).
+    # Default is false.
+    wrap_in_directory: true
+
+    # Can be used to change the archive formats for specific GOOSs.
+    # Most common use case is to archive as zip on Windows.
+    # Default is empty.
+    format_overrides:
+      - goos: linux
+        format: tar.gz
+      - goos: darwin
+        format: tar.gz
+      - goos: windows
+        format: zip
+
+    # Additional files/template/globs you want to add to the archive.
+    # Defaults are any files matching `LICENSE*`, `README*`, `CHANGELOG*`,
+    #  `license*`, `readme*` and `changelog*`.
+    files:
+      - none*
+    #   - LICENSE.txt
+    #   - README_{{.Os}}.md
+    #   - CHANGELOG.md
+    #   - docs/*
+    #   - design/*.png
+    #   - templates/**/*
+    #   # a more complete example, check the globbing deep dive below
+    #   - src: '*.md'
+    #     dst: docs
+    #     # Strip parent folders when adding files to the archive.
+    #     # Default: false
+    #     strip_parent: true
+    #     # File info.
+    #     # Not all fields are supported by all formats available formats.
+    #     # Defaults to the file info of the actual file if not provided.
+    #     info:
+    #       owner: root
+    #       group: root
+    #       mode: 0644
+    #       # format is `time.RFC3339Nano`
+    #       mtime: 2008-01-02T15:04:05Z
+
+    # Disables the binary count check.
+    # Default: false
+    # allow_different_binary_count: true
+checksum:
+  # You can change the name of the checksums file.
+  # Default is `{{ .ProjectName }}_{{ .Version }}_checksums.txt`.
+  name_template: "checksum.sha256.sum"
+
+  # Algorithm to be used.
+  # Accepted options are sha256, sha512, sha1, crc32, md5, sha224 and sha384.
+  # Default is sha256.
+  algorithm: sha256
+
+  # IDs of artifacts to include in the checksums file.
+  # If left empty, all published binaries, archives, linux packages and source archives
+  # are included in the checksums file.
+  # Default is an empty list.
+  # ids:
+  #   - foo
+  #   - bar
+
+  # Disable the generation/upload of the checksum file.
+  # Default is false.
+  disable: true
+
+  # You can add extra pre-existing files to the checksums file.
+  # The filename on the checksum will be the last part of the path (base).
+  # If another file with the same name exists, the last one found will be used.
+  # These globs can also include templates.
+  #
+  # Defaults to empty.
+  # extra_files:
+  #   - glob: ./path/to/file.txt
+  #   - glob: ./glob/**/to/**/file/**/*
+  #   - glob: ./glob/foo/to/bar/file/foobar/override_from_previous
+  #   - glob: ./single_file.txt
+  #     name_template: file.txt # note that this only works if glob matches 1 file only
+snapshot:
+  # Allows you to change the name of the generated snapshot
+  #
+  # Note that some pipes require this to be semantic version compliant (nfpm,
+  # for example).
+  #
+  # Default is `{{ .Version }}-SNAPSHOT-{{.ShortCommit}}`.
+  # name_template: '{{ incpatch .Version }}-devel'
+  name_template: '{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}'
+changelog:
+  # Set this to true if you don't want any changelog at all.
+  # Warning: this will also ignore any changelog files passed via `--release-notes`,
+  # and will render an empty changelog.
+  # This may result in an empty release notes on GitHub/GitLab/Gitea.
+  skip: true
+
+  # Changelog generation implementation to use.
+  #
+  # Valid options are:
+  # - `git`: uses `git log`;
+  # - `github`: uses the compare GitHub API, appending the author login to the changelog.
+  # - `gitlab`: uses the compare GitLab API, appending the author name and email to the changelog.
+  # - `github-native`: uses the GitHub release notes generation API, disables the groups feature.
+  #
+  # Defaults to `git`.
+  # use: github
+
+  # Sorts the changelog by the commit's messages.
+  # Could either be asc, desc or empty
+  # Default is empty
+  # sort: asc
+
+  # Group commits messages by given regex and title.
+  # Order value defines the order of the groups.
+  # Proving no regex means all commits will be grouped under the default group.
+  # Groups are disabled when using github-native, as it already groups things by itself.
+  #
+  # Default is no groups.
+  # groups:
+  #   - title: Features
+  #     regexp: "^.*feat[(\\w)]*:+.*$"
+  #     order: 0
+  #   - title: 'Bug fixes'
+  #     regexp: "^.*fix[(\\w)]*:+.*$"
+  #     order: 1
+  #   - title: Others
+  #     order: 999
+
+  # filters:
+    # Commit messages matching the regexp listed here will be removed from
+    # the changelog
+    # Default is empty
+    # exclude:
+    #   - '^docs:'
+    #   - '^test:'
+
+gomod:
+  # Proxy a module from proxy.golang.org, making the builds verifiable.
+  # This will only be effective if running against a tag. Snapshots will ignore this setting.
+  # Notice: for this to work your `build.main` must be a package, not a `.go` file.
+  #
+  # Default is false.
+  # proxy: true
+
+  # If proxy is true, use these environment variables when running `go mod` commands (namely, `go mod tidy`).
+  # Defaults to `os.Environ()`.
+  # env:
+  #   - GOPROXY=https://proxy.golang.org,direct
+  #   - GOSUMDB=sum.golang.org
+  #   - GOPRIVATE=example.com/blah
+
+  # Sets the `-mod` flag value.
+  # Defaults to empty.
+  # mod: mod
+
+  # Which Go binary to use.
+  # Defaults to `go`.
+  gobinary: go

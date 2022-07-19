@@ -1,0 +1,74 @@
+project_name: game-scraper
+builds:
+  - id: bin/necro
+    dir: .
+    main: ./cmd/necro
+    binary: bin/necro
+    gcflags:
+      - all=-N -l
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.CommitDate}}
+      - -X main.builtBy=goreleaser
+    env:
+      - CGO_ENABLED=0
+    goos:
+      # - linux
+      - darwin
+      # - windows
+    goarch:
+      - "386"
+      - amd64
+      - arm
+      - arm64
+      # - mips
+      # - mipsle
+      # - mips64
+      # - mips64le
+    # goarm:
+    #   - 5
+    #   - 6
+    #   - 7
+    # goamd64:
+    #   - v1
+    #   - v2
+    #   - v3
+    #   - v4
+    # gomips:
+    #   - hardfloat
+    #   - softfloat
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    builder: go
+universal_binaries:
+  - id: bin/necro
+    ids:
+      - bin/necro
+    name_template: 'bin/necro'
+    replace: true
+archives:
+  - id: bin/necro
+    builds:
+      - bin/necro
+    format: binary
+    replacements:
+      darwin: macOS
+      linux: Linux
+      windows: Windows
+      "386": 32-bit
+      amd64: 64-bit
+    wrap_in_directory: true
+    format_overrides:
+      - goos: linux
+        format: tar.gz
+      - goos: darwin
+        # format: tar.gz
+        format: binary
+      - goos: windows
+        format: zip
+    files:
+      - none*
+snapshot:
+  name_template: '{{ incpatch .Version }}-SNAPSHOT-{{.ShortCommit}}'
