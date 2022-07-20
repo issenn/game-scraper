@@ -2,8 +2,6 @@ module github.com/issenn/game-scraper
 
 go 1.18
 
-replace go-necro => github.com/issenn/game-scraper latest
-
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/mitchellh/go-homedir v1.1.0

@@ -10,28 +10,38 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"go-necro/internal/config"
+	"github.com/issenn/game-scraper/internal/config"
 )
 
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "necro",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
+	Short: "Show help for necro commands and flags.",
+	Long: `
+A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+to quickly create a Cobra application.
+
+`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
-	Run: func(cmd *cobra.Command, args []string) {
-		versionFlag, _ := cmd.Flags().GetBool("version")
-		if versionFlag {
-			fmt.Printf("necro: %s", VERSION)
-			return
+	Run: runRoot,
+}
+
+// runRoot implements the main rclone command with no subcommands
+func runRoot(cmd *cobra.Command, args []string) {
+	versionFlag, _ := cmd.Flags().GetBool("version")
+	if versionFlag {
+		ShowVersion()
+	} else {
+		_ = cmd.Usage()
+		if len(args) > 0 {
+			_, _ = fmt.Fprintf(os.Stderr, "Command not found.\n")
 		}
 
 		// configFile, _ := cmd.Flags().GetString("config-file")
@@ -46,11 +56,11 @@ to quickly create a Cobra application.`,
 		// fmt.Println(viper.GetStringMapString("log"))
 		// fmt.Println(viper.GetString("log.level"))
 
-		if len(args) < 1 {
-			cmd.Help()
-			return
-		}
-	},
+		// if len(args) < 1 {
+		// 	cmd.Help()
+		// 	return
+		// }
+	}
 }
 
 // rootCmd.CompletionOptions.DisableDefaultCmd = true
@@ -65,24 +75,25 @@ func Execute() {
 
 // initConfig reads in config file and ENV variables if set.
 func init() {
-	var Verbose bool
-	var Version bool
-	var ConfigFile string
+	var verbose bool
+	var version bool
+	var configFile string
 
 	cobra.OnInitialize(initConfig)
 
 	// Here you will define your flags and configuration settings.
+
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVarP(&ConfigFile, "config-file", "c", "config/default.yaml", "config file")
+	rootCmd.PersistentFlags().StringVarP(&configFile, "config-file", "c", "config/default.yaml", "config file")
 
-	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 
-	rootCmd.Flags().BoolVarP(&Version, "version", "V", false, "Version information")
+	rootCmd.Flags().BoolVarP(&version, "version", "V", false, "Version information")
 	// rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	viper.SetDefault("configFile", filepath.Join("config", "default.yaml"))

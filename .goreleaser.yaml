@@ -9,10 +9,10 @@ builds:
     ldflags:
       - -s
       - -w
-      - -X main.version={{.Version}}
-      - -X main.commit={{.Commit}}
-      - -X main.date={{.CommitDate}}
-      - -X main.builtBy=goreleaser
+      - -X github.com/issenn/game-scraper/internal/meta.Version={{.Version}}
+      - -X github.com/issenn/game-scraper/internal/meta.Commit={{.Commit}}
+      - -X github.com/issenn/game-scraper/internal/meta.Date={{.CommitDate}}
+      - -X github.com/issenn/game-scraper/internal/meta.BuiltBy=goreleaser
     env:
       - CGO_ENABLED=0
     goos:

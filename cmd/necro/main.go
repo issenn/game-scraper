@@ -1,6 +1,6 @@
 package main
 
-import "go-necro/internal/cmd"
+import "github.com/issenn/game-scraper/internal/cmd"
 
 func main() {
 	cmd.Execute()

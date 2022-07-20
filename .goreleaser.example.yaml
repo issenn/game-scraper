@@ -69,10 +69,10 @@ builds:
       - -w
       # -X definition  # 编译期设置变量的值
       #   add string value definition of the form importpath.name=value
-      - -X go-necro/internal/meta.Version={{.Version}}
-      - -X go-necro/internal/meta.Commit={{.Commit}}
-      - -X go-necro/internal/meta.Date={{.CommitDate}}
-      - -X go-necro/internal/meta.BuiltBy=goreleaser
+      - -X github.com/issenn/game-scraper/internal/meta.Version={{.Version}}
+      - -X github.com/issenn/game-scraper/internal/meta.Commit={{.Commit}}
+      - -X github.com/issenn/game-scraper/internal/meta.Date={{.CommitDate}}
+      - -X github.com/issenn/game-scraper/internal/meta.BuiltBy=goreleaser
       # - "{{ .Env.LDFLAGS }}"
       # - -X "main.goVersion={{.Env.GOVERSION}}"
       # - -X main.build={{.Version}}
