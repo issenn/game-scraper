@@ -1,0 +1,92 @@
+---
+# 日志配置
+log:
+  # 通用日志配置
+  dir: ./logs
+  level: debug
+  levelCmp: '>='
+  development: true
+  encoding: json
+  # 日志框架
+  logging: zap
+  # 日志记录器配置
+  logger:
+    # 具名日志记录器配置
+    - name: default
+      # logging: zap
+      level: debug
+      levelCmp: '>='
+      development: true
+      encoding: json
+      encoderConfig:
+        messageKey: message
+        levelKey: level
+        levelEncoder: lowercase
+      errorOutputPaths:
+        - stderr
+        - logger-default.err.log
+      # 日志记录器输出配置
+      core:
+        # 开发环境调试模式
+        - use: true
+          level: debug
+          levelCmp: '>='
+          encoding: plain-text
+          encoderConfig:
+            messageKey: message
+            levelKey: level
+            levelEncoder: lowercase
+          outputPaths:
+            - stdout
+        # 生产模式
+        - use: true
+          level: error
+          levelCmp: '>='
+          encoding: plain-text
+          encoderConfig:
+            messageKey: message
+            levelKey: level
+            levelEncoder: lowercase
+          outputPaths:
+            - stderr
+        - use: true
+          level: error
+          levelCmp: '>='
+          encoding: json
+          encoderConfig:
+            messageKey: message
+            levelKey: level
+            levelEncoder: lowercase
+          outputPaths:
+            - default.err.log
+        - use: true
+          level: info
+          levelCmp: '>='
+          encoding: json
+          encoderConfig:
+            messageKey: message
+            levelKey: level
+            levelEncoder: lowercase
+          outputPaths:
+            - default.log
+    - name: std
+      logging: zap
+      level: info
+      development: true
+      encoding: json
+      outputPaths:
+        - logrus.log
+      errorOutputPaths:
+        - stderr
+        - logger-logrus.err.log
+    # - name: logrus
+    #   logging: logrus
+    #   level: info
+    #   development: true
+    #   encoding: json
+    #   outputPaths:
+    #     - logrus.log
+    #   errorOutputPaths:
+    #     - stderr
+    #     - logger-logrus.err.log
+...
