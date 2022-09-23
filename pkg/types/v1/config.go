@@ -1,10 +1,9 @@
-package config
+package v1
 
 
 import (
 	"os"
 	"fmt"
-	// "strconv"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -19,8 +18,6 @@ import (
 	"github.com/issenn/game-scraper/internal/utils"
 	viperOption "github.com/issenn/game-scraper/pkg/viper"
 	mapstructureHooks "github.com/issenn/game-scraper/pkg/mapstructure"
-
-	// "github.com/issenn/game-scraper/pkg/logger"
 )
 
 
@@ -150,7 +147,7 @@ func (c *Config) LoadViper(configFile string, configDir string,
 	// viper.AutomaticEnv()  // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.MergeInConfig(); err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		_, configFileNotFound := err.(viper.ConfigFileNotFoundError)
 		if !configFileNotFound {
 			fmt.Println("Failed to read configuration:", err)
@@ -163,7 +160,7 @@ func (c *Config) LoadViper(configFile string, configDir string,
 		// v := viper.Get("log.logger")
 		// fmt.Printf("  %T\n  %+v\n", v, v)
 		// utils.PrettyPrint(viper.Get("log"))
-		// fmt.Println(viper.AllSettings())
+		fmt.Println(viper.AllSettings())
 		// fmt.Println(reflect.ValueOf(c).Elem().Type())
 		// fmt.Println(reflect.Zero(reflect.ValueOf(c).Elem().Type()))
 		// fmt.Printf("\n%+v\n\n", *c)
@@ -178,6 +175,7 @@ func (c *Config) LoadViper(configFile string, configDir string,
 		var decodeHookOption = viper.DecodeHook(
 			mapstructure.ComposeDecodeHookFunc(
 				// mapstructureHooks.TestUnmarshalerHookFunc(),
+				// ZeroValueToDefaultStringHookFunc(viper.AllSettings()),
 				// mapstructureHooks.UnmarshalerHookFunc(),
 				// mapstructureHooks.CustomUnmarshalerHookFunc(),
 				// mapstructure.StringToTimeDurationHookFunc(),
@@ -192,47 +190,10 @@ func (c *Config) LoadViper(configFile string, configDir string,
 		}
 		// fmt.Printf("Metadata: %+v\n\n", metadata)
 		// utils.PrettyPrint(*c)
-		fmt.Printf("config: %+v\n\n", *c)
+		// fmt.Println(*c)
 	}
 	return err
 }
-
-// func getViper(k string, d interface{}) interface{} {
-// 	if ok := viper.IsSet(k); ok {
-// 		return viper.Get(k)
-// 	}
-// 	return d
-// }
-
-// func setViper(k string, v interface{}) {
-// 	if ok := viper.IsSet(k); !ok {
-// 		viper.Set(k, v)
-// 	}
-// }
-
-// func ViperLogConfigComplete() error {
-// 	var key string = "log"
-// 	if ok := viper.IsSet(key); !ok {
-// 		return nil
-// 	}
-// 	topLogging := getViper(key + ".logging", "zap")
-// 	if ok := viper.IsSet(key + ".logger"); !ok {
-// 		return nil
-// 	}
-// 	for i := range viper.Get(key + ".logger").([]interface{}) {
-// 		key := key + ".logger." + strconv.Itoa(i)
-// 		setViper(key + ".logging", topLogging)
-// 		loggerLogging := getViper(key + ".logging", "zap")
-// 		if ok := viper.IsSet(key + ".writer"); !ok {
-// 			continue
-// 		}
-// 		for j := range viper.Get(key + ".writer").([]interface{}) {
-// 			key := key + ".writer." + strconv.Itoa(j)
-// 			setViper(key + ".logging", loggerLogging)
-// 		}
-// 	}
-// 	return nil
-// }
 
 func (c *Config) LoadConfigFile(configFile string) (err error) {
 	switch filepath.Ext(configFile) {

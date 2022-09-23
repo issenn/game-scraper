@@ -26,7 +26,7 @@ log:
         - stderr
         - logger-default.err.log
       # 日志记录器输出配置
-      core:
+      writer:
         # 开发环境调试模式
         - use: true
           level: debug

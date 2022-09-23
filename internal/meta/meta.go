@@ -6,7 +6,10 @@ import (
 )
 
 
+// Version information.
 var (
+	AppName   string
+
 	// Version is the compile-time set version
 	Version   string
 
@@ -26,6 +29,10 @@ var (
 	// UserAgent string
 )
 
+type meta struct {
+	AppName   string
+}
+
 //Details contains the state of the executable at build time
 type versionMeta struct {
 	Version   string `json:"version"`
@@ -38,10 +45,36 @@ type versionMeta struct {
 	GOARCH    string
 }
 
+var Meta meta
 var VersionMeta versionMeta
 
+func getMeta() meta {
+	return meta{
+		AppName:   getAppName(),
+	}
+}
+
+func SetDefaultAppName(name string) {
+	if AppName == "" || AppName == "unknown" {
+		AppName = name
+		Meta.AppName = name
+	}
+}
+
+func SetAppName(name string) {
+	AppName = name
+	Meta.AppName = name
+}
+
+func getAppName() string {
+	if AppName == "" {
+		AppName = "unknown"
+	}
+	return AppName
+}
+
 // Get returns a prepopulated Details struct
-func Get() versionMeta {
+func getVersionMeta() versionMeta {
 	return versionMeta{
 		Version:   getVersion(),
 		Commit:    Commit,
@@ -78,6 +111,7 @@ func getGoVersion() string {
 }
 
 func init() {
-	VersionMeta = Get()
+	Meta = getMeta()
+	VersionMeta = getVersionMeta()
 	// UserAgent = "Watchtower/" + Version
 }

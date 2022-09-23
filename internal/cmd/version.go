@@ -10,8 +10,8 @@ import (
 
 
 var (
-	VERSION    = meta.VersionMeta.Version
-	GO_VERSION = meta.VersionMeta.GoVersion
+	VERSION    string
+	GO_VERSION string
 )
 
 // versionCmd represents the version command
@@ -107,6 +107,8 @@ func CheckVersion() {
 }
 
 func init() {
+	initByLDFlags()
+
 	rootCmd.AddCommand(versionCmd)
 
 	var (
@@ -128,4 +130,9 @@ func init() {
 	versionCmd.Flags().BoolVarP(&shortened, "short", "s", false, "Use shortened output for version information.")
 	versionCmd.Flags().StringVarP(&output, "output", "o", "json", "Output format. One of 'string', 'yaml' or 'json'.")
 	versionCmd.Flags().BoolVarP(&check, "check", "", false, "Check for new version")
+}
+
+func initByLDFlags() {
+	VERSION    = meta.VersionMeta.Version
+	GO_VERSION = meta.VersionMeta.GoVersion
 }
